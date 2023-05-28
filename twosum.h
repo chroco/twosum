@@ -14,31 +14,34 @@
 #define MAX_NUMBER      10e9
 //#define RAND_MODIFIER   2 * MAX_NUMBER + 1  
 
-int initArray(int64_t *pArray, const int size)
+int initArray(int64_t array[], const int size)
 {
   int i;
-  const int64_t upperBound = (int64_t)MAX_NUMBER;
-  const int64_t spread = 2 * upperBound;
-  int64_t tmp;
+  const int64_t min = (int64_t)MIN_NUMBER;
+  const int64_t max = (int64_t)MAX_NUMBER;
+  const int64_t spread = 2 * max + 1;
+  int64_t num;
   
-  printf("%"PRId64"\n", INT64_MAX);
-  printf("%"PRId64"\n", upperBound);
-  printf("%"PRId64"\n", spread);
+  printf("INT64_MAX: %20"PRId64"\n", (int64_t)INT64_MAX);
+  printf("RAND_MAX:  %20"PRId64"\n", (int64_t)RAND_MAX);
+  printf("min:       %20"PRId64"\n", min);
+  printf("max:       %20"PRId64"\n", max);
+  printf("spread:    %20"PRId64"\n", spread);
+  printf("\n");
+
+  //int randomNumber = rand() % (max - min + 1) + min;
   
   for(i = 0; i < size; ++i)
   {
-    //tmp = rand() % (spread + 1);
-    //tmp = tmp - upperBound; 
-   // *(pArray + i) = tmp;
-    //*(pArray + i) = rand() % (spread + 1) - upperBound;
-    *(pArray + i) = i;
-    //*(pArray + i) = ((int64_t)(rand() % (spread + 1)) - upperBound);
+    num = rand();
+    num = (num << 32) | rand();
+    array[i] = num % spread - max;
   }
   
   return 0;
 }
 
-int printArray(int64_t *pArray, const int size)
+int printArray(int64_t array[], const int size)
 {
   int i;
   // printf("target: %"PRId64 "\n", tar);
@@ -46,12 +49,12 @@ int printArray(int64_t *pArray, const int size)
   
   for(i = 0; i < size; ++i)
   {
-    if(i % 10 == 0)
+    if(i % 5 == 0)
     {
       printf("\n");
     }
 
-    printf("%"PRId64" ", *(pArray + i));
+    printf("%15"PRId64" ", array[i]);
   }
   
   printf("\n");
