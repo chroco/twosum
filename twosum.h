@@ -12,7 +12,16 @@
 #define MAX_ARRAY_SIZE  10e4
 #define MIN_NUMBER      -10e9
 #define MAX_NUMBER      10e9
-//#define RAND_MODIFIER   2 * MAX_NUMBER + 1  
+
+int testArrayConstraints(const int size)
+{
+  if(size < (int)MIN_ARRAY_SIZE || size > (int)MAX_ARRAY_SIZE)
+  {
+    printf("Error, array size out of bounds!\n");
+  }
+
+  return 0;
+}
 
 int initArray(int64_t array[], const int size)
 {
@@ -29,8 +38,6 @@ int initArray(int64_t array[], const int size)
   printf("spread:    %20"PRId64"\n", spread);
   printf("\n");
 
-  //int randomNumber = rand() % (max - min + 1) + min;
-  
   for(i = 0; i < size; ++i)
   {
     num = rand();
@@ -44,7 +51,7 @@ int initArray(int64_t array[], const int size)
 int printArray(int64_t array[], const int size)
 {
   int i;
-  // printf("target: %"PRId64 "\n", tar);
+  
   printf("array:");
   
   for(i = 0; i < size; ++i)
@@ -62,19 +69,81 @@ int printArray(int64_t array[], const int size)
   return 0;
 }
 
-int sumTwoOrderN2(int64_t tar, int64_t nArray[], const int size)
+int isIndexUsed(int index, int64_t iArray[], int iCounter, const int iSize)
+{
+  int i;
+
+  if(iCounter > iSize)
+  {
+    return -1;
+  }
+  
+  for(i = 0; i < iCounter; ++i)
+  {
+    if(index == iArray[i])
+    {
+      return 1;
+    }
+  }
+  
+  return 0;
+}
+
+int sumTwoOrderN2(int64_t tar, int64_t array[], const int size)
 {
   // single line variable declaration for readability
   int i; 
   int j;
+  int isFound = 0;
+  const int indexSize = 1000;
+  int indexCounter = 0;
+  int64_t usedIndexes[indexSize];
+  int iUsed = 0;
+  int jUsed = 0;
+
+  memset(usedIndexes, 0, indexSize * sizeof(int));
   
   for(i = 0; i < size; ++i)
   {
     for(j = 0; j < size; ++j)
     {
+      if(isFound)
+      {
+        iUsed = isIndexUsed(i, usedIndexes, indexCounter, indexSize);
+        jUsed = isIndexUsed(j, usedIndexes, indexCounter, indexSize);
         
+        if(iUsed < 0 || jUsed < 0)
+        {
+          printf("Error, cowardly running away!\n");
+          return 1;
+        }
+      }
+      
+      if(iUsed + jUsed == 0)
+      {
+        if(array[i] + array[j] == tar)
+        {
+          isFound = 1;
+          usedIndexes[indexCounter] = i;
+          ++indexCounter;
+          usedIndexes[indexCounter] = j;
+          ++indexCounter;
+
+          printf("(%i, %i) ", i, j); 
+        }
+      }
+
+      iUsed = 0;
+      jUsed = 0;
     }
   }
+  
+  if(isFound == 0)
+  {
+    printf("No sum of target %"PRId64" found in array!", tar);
+  }
+
+  printf("\n");
   
   return 0;
 }
